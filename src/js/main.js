@@ -5,11 +5,15 @@ var currentTopic = null;
 $(function () {
     //init ui listeners
     $(".connection .connect").click(function () {
-        var form = $(this).parents(".connection");
-        var serverName = form.find("#wampServer").val();
-        var user = form.find("#wampServerLogin").val();
-        var pass = form.find("#wampServerPassword").val();
-        connect(serverName, user, pass);
+        if (Modernizr.websockets) {
+            var form = $(this).parents(".connection");
+            var serverName = form.find("#wampServer").val();
+            var user = form.find("#wampServerLogin").val();
+            var pass = form.find("#wampServerPassword").val();
+            connect(serverName, user, pass);
+        } else {
+            showNotification("Sorry, seems like your browser does not support websockets ");
+        }
     });
 
     $(".rpc .call").click(function () {
@@ -19,21 +23,29 @@ $(function () {
             var procParams = form.find("#procParams").val();
             rpcCall(procName, procParams, currentPrefix);
         } else {
-            //alert about no connection
+            showNotification("Not connected to WAMP server ");
         }
     });
 
     $(".add-prefix-form .add-prefix").click(function () {
-        var form = $(this).parents(".add-prefix-form");
-        var prefix = form.find("#prefix").val();
-        var uri = form.find("#prefixUri").val();
-        addPrefix(prefix, uri);
+        if (wampSession) {
+            var form = $(this).parents(".add-prefix-form");
+            var prefix = form.find("#prefix").val();
+            var uri = form.find("#prefixUri").val();
+            addPrefix(prefix, uri);
+        } else {
+            showNotification("Not connected to WAMP server ");
+        }
     });
 
     $(".subscribe-form .subscribe").click(function () {
-        var form = $(this).parents(".subscribe-form");
-        var uri = form.find("#topicUri").val();
-        subscribe(uri);
+        if (wampSession) {
+            var form = $(this).parents(".subscribe-form");
+            var uri = form.find("#topicUri").val();
+            subscribe(uri);
+        } else {
+            showNotification("Not connected to WAMP server ");
+        }
     });
 
     $(".topic .unsubscribe").click(function () {
@@ -44,9 +56,17 @@ $(function () {
     });
 
     $(".publish-form .publish").click(function () {
-        var form = $(this).parents(".publish-form");
-        var msg = form.find("#pubMessage").val();
-        publish(currentTopic, msg);
+        if (wampSession) {
+            if (currentTopic) {
+                var form = $(this).parents(".publish-form");
+                var msg = form.find("#pubMessage").val();
+                publish(currentTopic, msg);
+            } else {
+                showNotification("Choose a topic first ");
+            }
+        } else {
+            showNotification("Not connected to WAMP server ");
+        }
     });
 });
 
@@ -62,21 +82,7 @@ function subscribe(topic) {
     $(".topics .topic").removeClass("active");
     $(".topics").append(topicItem);
     currentTopic = topic;
-    bindTopicListeners();
-}
-
-function topicCallback(topic, event) {
-    logMessage("Message in topic " + topic + ": " + JSON.stringify(event), "success");
-}
-
-function unsubscribe(topic) {
-    wampSession.unsubscribe(topic);
-    logMessage("Unsubscribe from topic " + topic, "info");
-}
-
-function publish(topic, event) {
-    wampSession.publish(topic, event);
-    logMessage("Publish event " + event + " to topic " + topic, "info");
+    bindTopicListeners(topic);
 }
 
 function bindTopicListeners(topic) {
@@ -91,6 +97,20 @@ function bindTopicListeners(topic) {
             currentTopic = item.data("topic");
         }
     });
+}
+
+function topicCallback(topic, event) {
+    logMessage("Message in topic " + topic + ": " + JSON.stringify(event), "success");
+}
+
+function unsubscribe(topic) {
+    wampSession.unsubscribe(topic);
+    logMessage("Unsubscribe from topic " + topic, "info");
+}
+
+function publish(topic, event) {
+    wampSession.publish(topic, event);
+    logMessage("Publish event " + event + " to topic " + topic, "info");
 }
 
 function addPrefix(prefix, uri) {
@@ -109,13 +129,10 @@ function addPrefix(prefix, uri) {
 function bindPrefixListener(prefix) {
     $(".prefixes .prefix[data-prefix='" + prefix + "']").click(function () {
         var item = $(this);
-        console.info(item);
         if (item.hasClass("active")) {
-            console.info("has active");
             $(".prefixes .prefix").removeClass("active");
             currentPrefix = null;
         } else {
-            console.info("no active");
             $(".prefixes .prefix").removeClass("active");
             item.addClass("active");
             currentPrefix = item.data("prefix");
@@ -145,10 +162,6 @@ function connect(serverName, user, pass) {
         //Connection callback
         function (session) {
             wampSession = session;
-
-            //Authenticate
-//            var username = 'guest';
-//            var password = 'secret-password';
 
             //send authreq rpc call
             if (user && pass) {
@@ -205,10 +218,19 @@ function createLogMessage(text, type) {
         ":" + zeroPad(currentDate.getSeconds(), 2) +
         "." + zeroPad(currentDate.getMilliseconds(), 3) + "]";
 
-    return "<div class='alert alert-" + type + "'>" +
-        "<span class='time'>"
-        + dateText +
-        "</span>&nbsp;" +
-        "<a class='text'>" + text + "</a>" +
-        "</div>";
+    return "<div class='alert alert-" + type + "'><span class='time'>" + dateText +
+        "</span>&nbsp;<a class='text'>" + text + "</a></div>";
+}
+
+function showNotification(message) {
+    $('.global-alert').notify({
+        message: message,
+        type: 'danger',
+        closable: false,
+        transition: 'fade',
+        fadeOut: {
+            enabled: true,
+            delay: 3000
+        }
+    }).show();
 }
