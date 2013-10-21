@@ -7,7 +7,7 @@ Uses Mongoose to serve pages.
 Howto
 ------
 1. Launch Mongoose
-2. Goto localhost:9090
+2. Goto localhost:9090 (can be changed in mongoose.conf)
 3. Connect to your wamp app URL
 4. Set up prefixes if needed
 5. Run RPC calls (only one param for now)
