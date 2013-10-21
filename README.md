@@ -12,4 +12,4 @@ Howto
 4. Set up prefixes if needed
 5. Run RPC calls (only one param for now)
 6. Subscribe to pubsub topics, receive/send data
-7. All actions are being logged in "Action Log" at the bottom of the page
+7. All actions are logged in "Action Log" at the bottom of the page
