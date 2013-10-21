@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>WAMP Protocol Testbed</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-notify.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+</head>
+<body>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="container">
+    <h1>WAMP Protocol Testbed</h1>
+</div>
+
+<div class="container">
+    <div class="panel-group" id="connection-accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#connection-accordion" href="#connection-collapse">
+                        Connection Settings
+                    </a>
+                </h4>
+            </div>
+            <div id="connection-collapse" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Connection</h4>
+
+                            <div class="connection">
+                                <div class="form-group">
+                                    <label for="wampServer">WAMP Server</label>
+                                    <input type="url" class="form-control" id="wampServer" placeholder="ws://localhost:8080/ws">
+                                </div>
+                                <div class="form-group">
+                                    <label for="wampServerLogin">Login</label>
+                                    <input type="text" class="form-control" id="wampServerLogin" placeholder="Login">
+                                </div>
+                                <div class="form-group">
+                                    <label for="wampServerPassword">Password</label>
+                                    <input type="password" class="form-control" id="wampServerPassword" placeholder="Password">
+                                </div>
+                                <button class="btn btn-primary connect">Connect</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Prefix Settings</h4>
+
+                            <div class="form-inline add-prefix-form" role="form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="prefix">Prefix</label>
+                                    <input type="email" class="form-control" id="prefix" placeholder="Prefix">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="prefixUri">URI</label>
+                                    <input type="url" class="form-control" id="prefixUri" placeholder="URI">
+                                </div>
+                                <button class="btn btn-sm btn-primary add-prefix"><span class="glyphicon glyphicon-plus"></span> Add</button>
+                            </div>
+                            <ul class="list-group prefixes">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Remote Procedure Call</h4>
+
+                    <div role="form" class="rpc">
+                        <div class="form-group">
+                            <label for="procName">Procedure Name</label>
+                            <input type="text" class="form-control" id="procName" placeholder="Procedure Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="procParams">Parameters</label>
+                            <textarea class="form-control" id="procParams" placeholder="{}" rows="5"></textarea>
+                        </div>
+                        <button class="btn btn-primary call">Call</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Publish/Subscribe</h4>
+
+                    <div class="form-inline subscribe-form" role="form">
+                        <div class="form-group">
+                            <label class="sr-only" for="topicUri">Topic URI</label>
+                            <input type="url" class="form-control" id="topicUri" placeholder="URI">
+                        </div>
+                        <button class="btn btn-sm btn-primary subscribe"><span class="glyphicon glyphicon-ok"></span> Subscribe</button>
+                    </div>
+                    <h5>Topics:</h5>
+                    <ul class="list-group topics">
+                    </ul>
+                    <div role="form" class="publish-form">
+                        <div class="form-group">
+                            <label for="pubMessage">Parameters</label>
+                            <textarea class="form-control" id="pubMessage" rows="5"></textarea>
+                        </div>
+                        <button class="btn btn-primary publish">Publish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default action-log">
+        <div class="panel-body">
+            <h4>Action Log</h4>
+
+            <div class="log-content">
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
+
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/vendor/bootstrap-notify.js"></script>
+<script src="js/vendor/autobahn.js"></script>
+
+<script src="js/main.js"></script>
+</body>
+</html>
