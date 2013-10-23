@@ -48,13 +48,6 @@ $(function () {
         }
     });
 
-    $(".topic .unsubscribe").click(function () {
-        var item = $(this).parents(".topic");
-        var uri = item.data("topic");
-        unsubscribe(uri);
-        item.remove();
-    });
-
     $(".publish-form .publish").click(function () {
         if (wampSession) {
             if (currentTopic) {
@@ -86,7 +79,8 @@ function subscribe(topic) {
 }
 
 function bindTopicListeners(topic) {
-    $(".topics .topic[data-topic='" + topic + "']").click(function () {
+    var topicItem = $(".topics .topic[data-topic='" + topic + "']");
+    topicItem.click(function () {
         var item = $(this);
         if (item.hasClass("active")) {
             $(".topics .topic").removeClass("active");
@@ -96,6 +90,18 @@ function bindTopicListeners(topic) {
             item.toggleClass("active");
             currentTopic = item.data("topic");
         }
+        return false;
+    });
+
+    topicItem.find(".unsubscribe").click(function () {
+        var item = $(this).parents(".topic");
+        var uri = item.data("topic");
+        if (item.hasClass("active")) {
+            currentTopic = null;
+        }
+        unsubscribe(uri);
+        item.remove();
+        return false;
     });
 }
 
