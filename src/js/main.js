@@ -10,9 +10,11 @@ $(function () {
             var serverName = form.find("#wampServer").val();
             var user = form.find("#wampServerLogin").val();
             var pass = form.find("#wampServerPassword").val();
-            connect(serverName, user, pass);
+            if (serverName) {
+                connect(serverName, user, pass);
+            }
         } else {
-            showNotification("Sorry, seems like your browser does not support websockets ");
+            showNotification("Sorry, seems like your browser does not support websockets");
         }
     });
 
@@ -21,9 +23,25 @@ $(function () {
             var form = $(this).parents(".rpc");
             var procName = form.find("#procName").val();
             var procParams = form.find("#procParams").val();
-            rpcCall(procName, procParams, currentPrefix);
+            var paramAsJson = null;
+            if (procParams) {
+                try {
+                    paramAsJson = JSON.parse(procParams);
+                }
+                catch (e) {
+                    logMessage(e, "danger");
+                }
+            }
+            if (paramAsJson) {
+                procParams = paramAsJson;
+            }
+            if (procName) {
+                rpcCall(procName, procParams, currentPrefix);
+            } else {
+                showNotification("Specify URI of procedure to call");
+            }
         } else {
-            showNotification("Not connected to WAMP server ");
+            showNotification("Not connected to WAMP server");
         }
     });
 
@@ -32,9 +50,13 @@ $(function () {
             var form = $(this).parents(".add-prefix-form");
             var prefix = form.find("#prefix").val();
             var uri = form.find("#prefixUri").val();
-            addPrefix(prefix, uri);
+            if (prefix && uri) {
+                addPrefix(prefix, uri);
+            } else {
+                showNotification("Specify both Prefix and URI");
+            }
         } else {
-            showNotification("Not connected to WAMP server ");
+            showNotification("Not connected to WAMP server");
         }
     });
 
@@ -42,9 +64,13 @@ $(function () {
         if (wampSession) {
             var form = $(this).parents(".subscribe-form");
             var uri = form.find("#topicUri").val();
-            subscribe(uri);
+            if (uri) {
+                subscribe(uri);
+            } else {
+                showNotification("URI of topic is empty");
+            }
         } else {
-            showNotification("Not connected to WAMP server ");
+            showNotification("Not connected to WAMP server");
         }
     });
 
@@ -53,12 +79,16 @@ $(function () {
             if (currentTopic) {
                 var form = $(this).parents(".publish-form");
                 var msg = form.find("#pubMessage").val();
-                publish(currentTopic, msg);
+                if (msg) {
+                    publish(currentTopic, msg);
+                } else {
+                    showNotification("Event is empty");
+                }
             } else {
-                showNotification("Choose a topic first ");
+                showNotification("Choose a topic first");
             }
         } else {
-            showNotification("Not connected to WAMP server ");
+            showNotification("Not connected to WAMP server");
         }
     });
 });
